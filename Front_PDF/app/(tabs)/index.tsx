@@ -1,33 +1,73 @@
 import React from 'react';
-import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Linking,
+} from 'react-native';
+import { Video } from 'expo-av';
 
 export default function HomeScreen() {
+  const handlePressThreads = () => {
+    Linking.openURL('https://www.threads.net/@marcos.alexander.31');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* Avatar */}
+      {/* Avatar con video */}
       <View style={styles.avatarContainer}>
         <View style={styles.avatarCircle}>
-          <Image
-            source={require('../../assets/images/perfil.jpg')}
-            style={styles.avatarImage}
+          <Video
+            source={require('../../assets/videos/videoExam.mp4')}
+            style={styles.avatarVideo}
             resizeMode="cover"
+            shouldPlay
+            isLooping
+            isMuted
           />
         </View>
+
+        {/* Enlace a Threads */}
+        <TouchableOpacity onPress={handlePressThreads}>
+          <Text style={styles.threadsText}>@marcos.alexander.31 (Threads)</Text>
+        </TouchableOpacity>
       </View>
-      
+
       {/* Nombre y email */}
       <Text style={styles.name}>Marcos Suntaxi</Text>
       <Text style={styles.email}>masuntaxic@uce.edu.ec</Text>
 
-      {/* Sección inferior */}
-      <View style={styles.bottomSection}>
-        {/* Recuadro de descripción */}
-        <Text style={styles.name}>Dispositivos Móviles</Text>
-        <View style={styles.descriptionBox}>
-          <Text style={styles.name}>Quién soy</Text>
-          <Text style={styles.descriptionText}>
-            Soy estudiante de Sistemas de Información en la Universidad Central del Ecuador. Me apasiona la programación, la inteligencia artificial aplicada y la auditoría informática. En mi tiempo libre practico MMA, Muay Thai y también hago entrenamiento de pesas. Me interesa seguir creciendo profesionalmente en el campo de la tecnología y la seguridad informática.
-          </Text>
+      {/* Quién soy */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>¿Quién soy?</Text>
+        <Text style={styles.sectionText}>Soy un estudiante de Sistemas de Información en la Universidad Central del Ecuador apasionado por la tecnología, el desarrollo de software y la innovación. Me destaco por ser proactivo, curioso y comprometido con mis proyectos académicos y personales.</Text>
+      </View>
+
+      {/* Virtudes y conocimientos */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Virtudes y Conocimientos</Text>
+        <View style={styles.bulletItem}>
+          <Text style={styles.bullet}>🟢</Text>
+          <Text style={styles.bulletText}>Dominio de programación web y móvil (React, React Native)</Text>
+        </View>
+        <View style={styles.bulletItem}>
+          <Text style={styles.bullet}>🟢</Text>
+          <Text style={styles.bulletText}>Experiencia en pruebas de rendimiento con JMeter</Text>
+        </View>
+        <View style={styles.bulletItem}>
+          <Text style={styles.bullet}>🟢</Text>
+          <Text style={styles.bulletText}>Conocimientos sólidos en normativas NIST 800</Text>
+        </View>
+        <View style={styles.bulletItem}>
+          <Text style={styles.bullet}>🟢</Text>
+          <Text style={styles.bulletText}>Capacidad para integraciones con IA (LangChain, OpenAI)</Text>
+        </View>
+        <View style={styles.bulletItem}>
+          <Text style={styles.bullet}>🟢</Text>
+          <Text style={styles.bulletText}>Responsable, autodidacta y con habilidades para el trabajo en equipo</Text>
         </View>
       </View>
     </SafeAreaView>
@@ -50,14 +90,19 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative',
   },
-  avatarImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+  avatarVideo: {
+    width: '100%',
+    height: '100%',
+  },
+  threadsText: {
+    fontSize: 16,
+    color: '#0077b6',
+    textDecorationLine: 'underline',
+    marginTop: 8,
   },
   name: {
     fontSize: 28,

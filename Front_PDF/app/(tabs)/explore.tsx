@@ -4,19 +4,22 @@ import * as FileSystem from 'expo-file-system';
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, Button, Text, TextInput, View } from 'react-native';
 
-const BACKEND_URL = 'http://192.168.1.54:5000'; // Cambia por tu IP local
+const BACKEND_URL = 'http://192.168.232.138:5000'; // Cambia por tu IP local
 
 export default function Explore() {
   const [pdfName, setPdfName] = useState('');
   const [loading, setLoading] = useState(false);
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
+  const [tokensUsed, setTokensUsed] = useState<number | null>(null);
   const [status, setStatus] = useState('');
 
   const handlePickPdf = async () => {
     setLoading(true);
     setStatus('');
     setPdfName('');
+    setAnswer('');
+    setTokensUsed(null); // Limpio tokens al subir nuevo pdf
     try {
       const result = await DocumentPicker.getDocumentAsync({ type: 'application/pdf' });
       console.log('DocumentPicker result:', result);
@@ -59,6 +62,7 @@ export default function Explore() {
   const handleAsk = async () => {
     setLoading(true);
     setAnswer('');
+    setTokensUsed(null); // Limpio tokens cuando hago nueva pregunta
     setStatus('');
     try {
       const res = await axios.post(
@@ -67,6 +71,7 @@ export default function Explore() {
         { headers: { 'Content-Type': 'application/json' } }
       );
       setAnswer(res.data.answer);
+      setTokensUsed(res.data.tokens_used ?? null);
       setStatus('Respuesta recibida');
     } catch (err: any) {
       setStatus('Error al obtener respuesta');
@@ -105,6 +110,11 @@ export default function Explore() {
         <View style={{ marginTop: 16, backgroundColor: '#e3f2fd', padding: 12, borderRadius: 6 }}>
           <Text style={{ fontWeight: 'bold', color: '#1565c0' }}>Respuesta:</Text>
           <Text style={{ color: '#1565c0' }}>{answer}</Text>
+          {tokensUsed !== null && (
+            <Text style={{ marginTop: 8, fontStyle: 'italic', color: '#555' }}>
+              Tokens usados: {tokensUsed}
+            </Text>
+          )}
         </View>
       ) : null}
     </View>

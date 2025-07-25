@@ -1,6 +1,6 @@
 import os
 import hashlib
-import base64  # Importación faltante para decodificar base64
+import base64
 from pathlib import Path
 import fitz
 from dotenv import load_dotenv
@@ -10,6 +10,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_pinecone import PineconeVectorStore
 from langchain.chains import RetrievalQA
 from pinecone import Pinecone, ServerlessSpec
+
+from langchain.callbacks import get_openai_callback
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -63,8 +65,8 @@ def leer_pdf_bytes(content: bytes) -> str:
 
 def fragmentar(texto: str):
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=2000,
-        chunk_overlap=500,
+        chunk_size=1500,      # Cambiado a 1500
+        chunk_overlap=400,    # Cambiado a 400
         length_function=len
     )
     return splitter.create_documents([texto])
@@ -87,6 +89,17 @@ def crear_chain_qa():
         retriever=vectorstore.as_retriever()
     )
 
+# Función cifrado César +3 (igual que antes)
+def cifrado_cesar(texto: str, desplazamiento: int = 3) -> str:
+    resultado = ""
+    for char in texto:
+        if char.isalpha():
+            base = ord('A') if char.isupper() else ord('a')
+            resultado += chr((ord(char) - base + desplazamiento) % 26 + base)
+        else:
+            resultado += char
+    return resultado
+
 # Inicializar Flask
 app = Flask(__name__)
 CORS(app, resources={
@@ -98,7 +111,6 @@ qa_chain = crear_chain_qa()
 @app.route('/upload', methods=['POST'])
 def upload_pdf():
     try:
-        # Verificar si se envió como form-data o json
         if request.content_type == 'application/json':
             data = request.get_json()
             if not data or 'file' not in data:
@@ -118,7 +130,6 @@ def upload_pdf():
             
             content = file.read()
 
-        # Procesamiento del archivo
         file_hash = hash_archivo(content)
         
         if ya_existente(file_hash):
@@ -148,12 +159,19 @@ def ask_question():
         if not data or 'question' not in data:
             return jsonify({"error": "Se requiere una pregunta"}), 400
         
-        pregunta = data['question'] + "\nRecuerda que debes responder en español."
-        respuesta = qa_chain.run(pregunta)
+        pregunta = data['question'] + "\nResponde en español."
+        
+        # Usar get_openai_callback para contar tokens
+        with get_openai_callback() as cb:
+            respuesta = qa_chain.run(pregunta)
+            tokens_usados = cb.total_tokens
+        
+        respuesta_cifrada = cifrado_cesar(respuesta)
         
         return jsonify({
             "success": True,
-            "answer": respuesta
+            "answer": respuesta_cifrada,
+            "tokens_used": tokens_usados
         }), 200
         
     except Exception as e:
@@ -162,45 +180,3 @@ def ask_question():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
-
-
-# # === Interfaz Streamlit ===
-# st.set_page_config(page_title="PDF Gemini QA", layout="centered")
-# st.title("📄🔍 Pregunta a tu PDF con Gemini + Pinecone")
-
-# # --- Subida de PDF (opcional) ---
-# uploaded_file = st.file_uploader("Sube un archivo PDF (opcional)", type="pdf")
-# if uploaded_file:
-#     content = uploaded_file.read()
-#     file_hash = hash_archivo(content)
-
-#     if ya_existente(file_hash):
-#         st.info("✅ Este archivo ya fue vectorizado anteriormente.")
-#     else:
-#         with st.spinner("📚 Procesando y vectorizando el PDF..."):
-#             texto = leer_pdf_bytes(content)
-#             if texto.strip():
-#                 vectorizar_documento(texto)
-#                 guardar_hash(file_hash)
-#                 st.success("✅ Documento vectorizado y almacenado correctamente.")
-#             else:
-#                 st.error("⚠️ No se pudo extraer texto del PDF.")
-
-# # --- Crear chain QA (sin estado) ---
-# if "qa_chain" not in st.session_state:
-#     st.session_state.qa_chain = crear_chain_qa()
-
-# # --- Entrada de pregunta ---
-# pregunta = st.text_input("📝 Escribe tu pregunta:")
-# pregunta = pregunta + "/n Recuerda que debes responder en español."
-
-# if st.button("💬 Preguntar") and pregunta.strip():
-#     with st.spinner("🧠 Pensando..."):
-#         try:
-#             # Cada llamada es independiente, no hay historial guardado
-#             with get_openai_callback() as cb:
-#                 respuesta = st.session_state.qa_chain.run(pregunta)
-#                 st.success(respuesta)
-#                 st.info(f"🔢 Tokens estimados utilizados: {cb.total_tokens}")
-#         except Exception as e:
-#             st.error(f"❌ Ocurrió un error: {e}")
