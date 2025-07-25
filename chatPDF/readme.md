@@ -58,7 +58,7 @@ Este proyecto es una aplicación de preguntas y respuestas basada en contenidos 
 1. **Ejecutar la aplicación**
 
    ```bash
-   streamlit run app.py
+   python app.py
    ```
 
 2. **En el navegador**, ve a la URL indicada (por defecto `http://localhost:8501`).

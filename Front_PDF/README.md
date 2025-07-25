@@ -1,50 +1,76 @@
-# Welcome to your Expo app 👋
+# Bienvenido a tu app Expo 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Este es un proyecto de [Expo](https://expo.dev) creado con [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## Get started
+## Primeros pasos
 
-1. Install dependencies
+### 1. Crea y activa un entorno virtual de Python
 
-   ```bash
-   npm install
-   ```
+Antes de instalar las dependencias, configura y activa un entorno virtual de Python:
 
-2. Start the app
+```bash
+python -m venv venv
+# En Windows
+venv\Scripts\activate
+# En Mac/Linux
+source venv/bin/activate
+```
 
-   ```bash
-   npx expo start
-   ```
+### 2. Instala las dependencias
 
-In the output, you'll find options to open the app in a
+```bash
+npm install
+```
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### 3. Inicia la aplicación
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+```bash
+npx expo start
+```
 
-## Get a fresh project
+En la salida, encontrarás opciones para abrir la app en un:
 
-When you're ready, run:
+- [build de desarrollo](https://docs.expo.dev/develop/development-builds/introduction/)
+- [emulador de Android](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [simulador de iOS](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), una sandbox limitada para probar el desarrollo de apps con Expo
+
+Puedes comenzar a desarrollar editando los archivos dentro del directorio **app**. Este proyecto utiliza [ruteo basado en archivos](https://docs.expo.dev/router/introduction).
+
+---
+
+## Importante: Configuración de la URL del backend
+
+En el archivo `app/(tabs)/explore.tsx`, **debes** cambiar la URL del backend por la dirección IP local de tu computadora. Modifica la siguiente línea:
+
+```typescript
+const BACKEND_URL = 'http://192.168.100.23:5000'; // Cambia por tu IP local
+```
+
+Reemplaza `192.168.100.23` por la IP local real de tu computadora para que la app pueda conectarse correctamente al servidor backend desde tu dispositivo.
+
+---
+
+## Obtener un proyecto limpio
+
+Cuando estés listo, ejecuta:
 
 ```bash
 npm run reset-project
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Este comando moverá el código de inicio al directorio **app-example** y creará un nuevo directorio **app** donde podrás comenzar a desarrollar desde cero.
 
-## Learn more
+## Aprende más
 
-To learn more about developing your project with Expo, look at the following resources:
+Para aprender más sobre cómo desarrollar tu proyecto con Expo, revisa los siguientes recursos:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- [Documentación de Expo](https://docs.expo.dev/): Aprende lo básico o explora temas avanzados con nuestras [guías](https://docs.expo.dev/guides).
+- [Tutorial de Expo](https://docs.expo.dev/tutorial/introduction/): Sigue este tutorial paso a paso para crear un proyecto que funcione en Android, iOS y web.
 
-## Join the community
+## Únete a la comunidad
 
-Join our community of developers creating universal apps.
+Únete a nuestra comunidad de desarrolladores creando apps universales.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- [Expo en GitHub](https://github.com/expo/expo): Explora nuestra plataforma open source y contribuye.
+- [Comunidad en Discord](https://chat.expo.dev): Chatea con otros usuarios de Expo y haz preguntas.
