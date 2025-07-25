@@ -4,7 +4,7 @@ import * as FileSystem from 'expo-file-system';
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, Button, Text, TextInput, View } from 'react-native';
 
-const BACKEND_URL = 'http://192.168.232.138:5000'; // Cambia por tu IP local
+const BACKEND_URL = 'http://192.168.100.23:5000'; // Cambia por tu IP local
 
 export default function Explore() {
   const [pdfName, setPdfName] = useState('');
